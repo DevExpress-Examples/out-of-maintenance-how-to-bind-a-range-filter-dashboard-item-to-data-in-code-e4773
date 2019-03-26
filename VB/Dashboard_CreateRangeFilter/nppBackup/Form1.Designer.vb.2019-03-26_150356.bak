@@ -43,7 +43,7 @@
 			Me.ClientSize = New System.Drawing.Size(584, 491)
 			Me.Controls.Add(Me.dashboardViewer1)
 			Me.Name = "Form1"
-			Me.Text = "Range Filter Example"
+			Me.Text = "Form1"
 'INSTANT VB NOTE: The following InitializeComponent event wireup was converted to a 'Handles' clause:
 'ORIGINAL LINE: this.Load += new System.EventHandler(this.Form1_Load);
 			DirectCast(Me.dashboardViewer1, System.ComponentModel.ISupportInitialize).EndInit()

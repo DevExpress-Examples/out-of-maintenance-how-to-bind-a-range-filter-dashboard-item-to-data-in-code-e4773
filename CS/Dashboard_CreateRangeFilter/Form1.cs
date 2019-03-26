@@ -1,56 +1,105 @@
-﻿using System;
-using System.Windows.Forms;
-using DevExpress.DashboardCommon;
-using DevExpress.DataAccess;
+﻿using DevExpress.DashboardCommon;
+using DevExpress.DataAccess.Excel;
+using DevExpress.XtraEditors;
+using System;
 
-namespace Dashboard_CreateRangeFilter {
-    public partial class Form1 : Form {
-        public Form1() {
+namespace Dashboard_CreateRangeFilter
+{
+    public partial class Form1 : XtraForm
+    {
+        public Form1()
+        {
             InitializeComponent();
         }
-        private RangeFilterDashboardItem CreateRangeFilter(DashboardObjectDataSource dataSource) {
-
-            // Creates a Range Filter dashboard item and specifies its data source.
-            RangeFilterDashboardItem rangeFilter = new RangeFilterDashboardItem();            
+        private RangeFilterDashboardItem CreateRangeFilter(IDashboardDataSource dataSource)
+        {
+            // Create a Range Filter dashboard item and specify its data source.
+            RangeFilterDashboardItem rangeFilter = new RangeFilterDashboardItem();
             rangeFilter.DataSource = dataSource;
-
-            // Creates a new series of the Area type and adds this series to the Series collection to
+            // Create a new series of the Area type and add this series to the Series collection to
             // display it within the Range Filter.
             SimpleSeries salesAmountSeries = new SimpleSeries(SimpleSeriesType.Area);
             rangeFilter.Series.Add(salesAmountSeries);
-
-            // Specifies a measure to provide data used to calculate the Y-coordinate of the data points.
+            // Specify a measure to provide data used to calculate the Y-coordinate of the data points.
             salesAmountSeries.Value = new Measure("Extended Price");
-
-            // Specifies a dimension to provide Range Filter argument values.
+            // Specify a dimension to provide Range Filter argument values.
             rangeFilter.Argument = new Dimension("OrderDate");
-
-            // Specifies a group interval for argument values.
-            rangeFilter.Argument.DateTimeGroupInterval = DateTimeGroupInterval.MonthYear;           
-
+            // Specify a group interval for argument values.
+            rangeFilter.Argument.DateTimeGroupInterval = DateTimeGroupInterval.MonthYear;
+            // Add predefined ranges to the context menu.
+            // You can show the item caption and use the Select Date Time Periods drop-down button to apply predefined ranges.
+            rangeFilter.DateTimePeriods.AddRange(
+                DateTimePeriod.CreateLastYear(),
+                DateTimePeriod.CreateNextDays("Next 7 Days", 7),
+                new DateTimePeriod
+                { Name = "Month To Date",
+                  Start = new FlowDateTimePeriodLimit(DateTimeInterval.Month,0),
+                  End = new FlowDateTimePeriodLimit(DateTimeInterval.Day,1)
+                },
+                new DateTimePeriod
+                { Name = "Jul-18-2018 - Jan-18-2019",
+                  Start = new FixedDateTimePeriodLimit(new DateTime(2018, 7, 18)),
+                  End = new FixedDateTimePeriodLimit(new DateTime(2019, 1, 18)) }
+                );
+            // The caption is initially hidden. Uncomment the line to show the caption.
+            //rangeFilter.ShowCaption = true;
             return rangeFilter;
         }
-        private void Form1_Load(object sender, EventArgs e) {
 
-            // Creates a dashboard and sets it as the currently opened dashboard in the dashboard viewer.
+        private PivotDashboardItem CreatePivot(IDashboardDataSource dataSource)
+        {
+
+            // Create a pivot dashboard item and specify its data source.
+            PivotDashboardItem pivot = new PivotDashboardItem();
+            pivot.DataSource = dataSource;
+
+            // Specify dimensions that provide pivot column and row headers.
+            pivot.Columns.AddRange(new Dimension("Country"), new Dimension("Sales Person"));
+            pivot.Rows.AddRange(new Dimension("CategoryName"), new Dimension("ProductName"));
+
+            // Specify measures whose data is used to calculate pivot cell values.
+            pivot.Values.AddRange(new Measure("Extended Price"), new Measure("Quantity"));
+
+            // Specify the default expanded state of pivot column field values.
+            pivot.AutoExpandColumnGroups = true;
+
+            return pivot;
+        }
+
+        private DashboardExcelDataSource CreateExcelDataSource()
+        {
+            DashboardExcelDataSource excelDataSource = new DashboardExcelDataSource();
+            excelDataSource.FileName = "SalesPerson.xlsx";
+            ExcelWorksheetSettings worksheetSettings = new ExcelWorksheetSettings("Data");
+            excelDataSource.SourceOptions = new ExcelSourceOptions(worksheetSettings);
+            excelDataSource.Fill();
+            return excelDataSource;
+        }
+        private void Form1_Load(object sender, EventArgs e)
+        {
+
+            // Create a dashboard and display it in the dashboard viewer.
             dashboardViewer1.Dashboard = new Dashboard();
 
-            // Creates a data source and adds it to the dashboard data source collection.
-            DashboardObjectDataSource dataSource = new DashboardObjectDataSource();
-            dataSource.DataSource = (new nwindDataSetTableAdapters.SalesPersonTableAdapter()).GetData();
+            // Create a data source and add it to the dashboard data source collection.
+            DashboardExcelDataSource dataSource = CreateExcelDataSource();
             dashboardViewer1.Dashboard.DataSources.Add(dataSource);
 
-            // Creates a Range Filter dashboard item with the specified data source 
-            // and adds it to the Items collection to display within the dashboard.
+            // Create a Range Filter dashboard item with the specified data source 
+            // and add it to the Items collection to display within the dashboard.
             RangeFilterDashboardItem rangeFilter = CreateRangeFilter(dataSource);
             dashboardViewer1.Dashboard.Items.Add(rangeFilter);
 
-            // Creates a pivot and adds it to the dashboard. 
-            // Range Filter applies filtering to pivot data.
+            // Create a pivot and add it to the dashboard. 
             PivotDashboardItem pivot = CreatePivot(dataSource);
             dashboardViewer1.Dashboard.Items.Add(pivot);
 
-            // Reloads data in the data sources.
+            // Create the dashboard layout.
+            dashboardViewer1.Dashboard.RebuildLayout();
+            dashboardViewer1.Dashboard.LayoutRoot.FindRecursive(rangeFilter).Weight = 20;
+            dashboardViewer1.Dashboard.LayoutRoot.FindRecursive(pivot).Weight = 80;
+            dashboardViewer1.Dashboard.LayoutRoot.Orientation = DashboardLayoutGroupOrientation.Vertical;
+
             dashboardViewer1.ReloadData();
         }
     }
