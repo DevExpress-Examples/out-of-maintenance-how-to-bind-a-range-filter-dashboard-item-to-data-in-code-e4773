@@ -3,7 +3,7 @@
 
 * [Form1.cs](./CS/Dashboard_CreateRangeFilter/Form1.cs) (VB: [Form1.vb](./VB/Dashboard_CreateRangeFilter/Form1.vb))
 <!-- default file list end -->
-# How to bind a Range Filter dashboard item to data in code
+# How to Create the Range Filter Dashboard Item and Bind to Data in Code
 
 
 This example demonstrates how to bind a [Range Filter](https://docs.devexpress.com/Dashboard/15265) to data in code. The Range Filter dashboard item filters data displayed in the pivot table.
