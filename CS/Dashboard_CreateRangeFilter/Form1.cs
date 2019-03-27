@@ -26,21 +26,25 @@ namespace Dashboard_CreateRangeFilter
             rangeFilter.Argument = new Dimension("OrderDate");
             // Specify a group interval for argument values.
             rangeFilter.Argument.DateTimeGroupInterval = DateTimeGroupInterval.MonthYear;
+            // Restrict the displayed data.
+            rangeFilter.FilterString = "[OrderDate] > #2018-01-01#";
             // Add predefined ranges to the context menu.
             // You can show the item caption and use the Select Date Time Periods drop-down button to apply predefined ranges.
             rangeFilter.DateTimePeriods.AddRange(
                 DateTimePeriod.CreateLastYear(),
-                DateTimePeriod.CreateNextDays("Next 7 Days", 7),
+                DateTimePeriod.CreateNextMonths("Next 3 Months", 3),
                 new DateTimePeriod
-                { Name = "Month To Date",
-                  Start = new FlowDateTimePeriodLimit(DateTimeInterval.Month,0),
-                  End = new FlowDateTimePeriodLimit(DateTimeInterval.Day,1)
+                { Name = "Year To Date",
+                  Start = new FlowDateTimePeriodLimit(DateTimeInterval.Year, 0),
+                  End = new FlowDateTimePeriodLimit(DateTimeInterval.Day, 1)
                 },
                 new DateTimePeriod
                 { Name = "Jul-18-2018 - Jan-18-2019",
                   Start = new FixedDateTimePeriodLimit(new DateTime(2018, 7, 18)),
                   End = new FixedDateTimePeriodLimit(new DateTime(2019, 1, 18)) }
                 );
+            // Specify the period selected when the control is initialized.
+            rangeFilter.DefaultDateTimePeriodName = "Year To Date";
             // The caption is initially hidden. Uncomment the line to show the caption.
             //rangeFilter.ShowCaption = true;
             return rangeFilter;
