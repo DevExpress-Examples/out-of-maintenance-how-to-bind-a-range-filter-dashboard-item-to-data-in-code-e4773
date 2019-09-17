@@ -10,6 +10,7 @@ This example demonstrates how to create the [Range Filter](https://docs.devexpre
 
 ![screenshot](./images/screenshot.png)
 
+
 API in this example:
 
 * [RangeFilterDashboardItem](https://docs.devexpress.com/Dashboard/DevExpress.DashboardCommon.RangeFilterDashboardItem) class

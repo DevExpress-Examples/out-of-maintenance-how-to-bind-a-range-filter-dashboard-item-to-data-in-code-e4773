@@ -22,28 +22,18 @@ Namespace Dashboard_CreateRangeFilter
 			salesAmountSeries.Value = New Measure("Extended Price")
 			' Specify a dimension to provide Range Filter argument values.
 			rangeFilter.Argument = New Dimension("OrderDate")
-            ' Specify a group interval for argument values.
-            rangeFilter.Argument.DateTimeGroupInterval = DateTimeGroupInterval.MonthYear
-            ' Restrict the displayed data.
-            rangeFilter.FilterString = "[OrderDate] > #2018-01-01#"
-            ' Add predefined ranges to the context menu.
-            ' You can show the item caption and use the Select Date Time Periods drop-down button to apply predefined ranges.
-            rangeFilter.DateTimePeriods.AddRange(
-                DateTimePeriod.CreateLastYear(),
-                DateTimePeriod.CreateNextMonths("Next 3 Months", 3),
-                New DateTimePeriod With {
-                .Name = "Year To Date",
-                .Start = New FlowDateTimePeriodLimit(DateTimeInterval.Year, 0),
-                .End = New FlowDateTimePeriodLimit(DateTimeInterval.Day, 1)},
-                New DateTimePeriod With {
-                .Name = "Jul-18-2018 - Jan-18-2019",
-                .Start = New FixedDateTimePeriodLimit(New Date(2018, 7, 18)),
-                .End = New FixedDateTimePeriodLimit(New Date(2019, 1, 18))})
-            ' Specify the period selected when the control Is initialized.
-            rangeFilter.DefaultDateTimePeriodName = "Year To Date"
-            ' The caption is initially hidden. Uncomment the line to show the caption.
-            'rangeFilter.ShowCaption = true;
-            Return rangeFilter
+			' Specify a group interval for argument values.
+			rangeFilter.Argument.DateTimeGroupInterval = DateTimeGroupInterval.MonthYear
+			' Restrict the displayed data.
+			rangeFilter.FilterString = "[OrderDate] > #2018-01-01#"
+			' Add predefined ranges to the context menu.
+			' You can show the item caption and use the Select Date Time Periods drop-down button to apply predefined ranges.
+			rangeFilter.DateTimePeriods.AddRange(DateTimePeriod.CreateLastYear(), DateTimePeriod.CreateNextMonths("Next 3 Months", 3), New DateTimePeriod With {.Name = "Year To Date", .Start = New FlowDateTimePeriodLimit(DateTimeInterval.Year, 0), .End = New FlowDateTimePeriodLimit(DateTimeInterval.Day, 1)}, New DateTimePeriod With {.Name = "Jul-18-2018 - Jan-18-2019", .Start = New FixedDateTimePeriodLimit(New Date(2018, 7, 18)), .End = New FixedDateTimePeriodLimit(New Date(2019, 1, 18))})
+			' Specify the period selected when the control is initialized.
+			rangeFilter.DefaultDateTimePeriodName = "Year To Date"
+			' The caption is initially hidden. Uncomment the line to show the caption.
+			'rangeFilter.ShowCaption = true;
+			Return rangeFilter
 		End Function
 
 		Private Function CreatePivot(ByVal dataSource As IDashboardDataSource) As PivotDashboardItem
